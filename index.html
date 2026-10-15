@@ -386,6 +386,53 @@ details.panel:not([open]) > summary h2::after { content: ' ▸'; }
 .wl-card .arm-stats em { display: block; font-style: normal; text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 12px; color: var(--muted); }
 .wl-history summary { cursor: pointer; color: var(--muted); font-size: 14px; }
 
+/* Live game + reports */
+.scoreboard { border-top: 5px solid var(--gold); }
+.score { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.score > div { display: grid; justify-items: center; gap: 6px; background: var(--bg); border-radius: var(--radius); padding: 12px 8px; min-width: 0; }
+.score > div > span:first-child { font-family: var(--font-label); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-size: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tap.big-tap button { width: 44px; height: 44px; border-radius: 50%; font-size: 22px; }
+.tap.big-tap b { font-size: 34px; min-width: 2ch; text-align: center; }
+.tap button.plus { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.mini { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-label); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 13px; color: var(--muted); }
+.small-steps { gap: 14px; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 8px; }
+.stat { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.stat.win { border-left-color: var(--good); }
+.stat.lose { border-left-color: var(--bad); }
+.stat > span:first-child { font-weight: 600; font-size: 15px; display: grid; }
+.stat small { font-weight: 400; color: var(--muted); font-size: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px; }
+.tile { border: 1px solid var(--line); border-top: 4px solid var(--line); border-radius: var(--radius); padding: 12px; display: grid; gap: 2px; background: var(--surface); }
+.tile.good { border-top-color: var(--good); } .tile.bad { border-top-color: var(--bad); }
+.tile span { font-family: var(--font-label); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; color: var(--muted); }
+.tile b { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tile b small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.tile > small { color: var(--muted); font-size: 13px; }
+.chart { margin: 0; display: grid; gap: 6px; max-width: 680px; }
+.chart figcaption { font-weight: 600; font-size: 15px; }
+.chart figcaption small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .axis { stroke: var(--muted); stroke-width: 1; }
+.chart .goal { stroke: var(--gold-text); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.chart .tick { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
+.chart .m-good { fill: var(--good); } .chart .m-bad { fill: var(--bad); } .chart .m-even { fill: var(--muted); } .chart .m-qab { fill: var(--gold); }
+.chart rect:hover { opacity: .8; }
+.rep th { width: auto; font-size: 15px; }
+.rep td, .rep th { text-align: center; }
+.rep td.nm { text-align: left; font-weight: 600; white-space: nowrap; }
+.rep .pill { white-space: nowrap; }
+.rep tbody th { text-align: left; color: var(--gold-text); }
+.game-list { display: grid; gap: 6px; }
+.game-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px 12px; }
+.game-row:hover { border-color: var(--gold); }
+.gr-date { font-family: var(--font-label); font-weight: 700; font-size: 14px; color: var(--muted); }
+.gr-opp { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.gr-opp small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+.gr-score { font-family: var(--font-label); font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.gr-score .w { color: var(--good); } .gr-score .l { color: var(--bad); }
+@media (max-width: 520px) { .game-row { grid-template-columns: minmax(0, 1fr) auto; } .game-row .gr-date { grid-column: 1 / -1; } .game-row .pill { grid-column: 1 / -1; justify-self: start; } }
+
 /* Team */
 .check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
 .check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--gold); flex: none; }
@@ -841,7 +888,7 @@ function seedState() {
   ex.blocks[5].drills = ['foul-line', 'quarterbacks', 'spot-drill'];
   ex.notes = 'Example plan. Edit it or start a new one from a template.';
   const devo = blankDevo();
-  return { v: 1, plans: [ex], cur: ex.id, game: blankGame(), roster: [], outings: [], workAge: '13-14', checks: {}, devos: [devo], curDevo: devo.id };
+  return { v: 1, plans: [ex], cur: ex.id, game: blankGame(), roster: [], outings: [], games: [], workAge: '13-14', checks: {}, devos: [devo], curDevo: devo.id };
 }
 function blankDevo() {
   return { id: uid(), title: '', date: today(), setting: 'Practice', leader: '', hook: '', scripture: '', bigIdea: '', points: '', questions: ['', '', ''], challenge: '', prayer: '' };
@@ -860,6 +907,7 @@ function loadState() {
       delete s.game.roster;
       if (!s.game.lineup) s.game.lineup = [];
       if (!s.outings) s.outings = [];
+      if (!s.games) s.games = [];
       if (!s.workAge) s.workAge = '13-14';
       if (!s.devos?.length) { const d = blankDevo(); s.devos = [d]; s.curDevo = d.id; }
       return s;
@@ -872,7 +920,7 @@ function save() {
   clearTimeout(save.t);
   save.t = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }, 200);
 }
-const ui = { bunt: 1, tab: 'practice', newOpen: false, confirm: null, q: '', cat: 'All', gameTab: 'plan' };
+const ui = { bunt: 1, tab: 'practice', newOpen: false, confirm: null, q: '', cat: 'All', gameTab: 'live' };
 const curPlan = () => state.plans.find(p => p.id === state.cur) || state.plans[0];
 
 /* ========================== helpers ========================== */
@@ -1058,13 +1106,13 @@ function libCards(list) {
 /* ========================== GAME DAY ========================== */
 function renderGame() {
   const g = state.game;
-  const tabs = [['plan', 'Game plan'], ['lineup', 'Lineup card'], ['pitchers', 'Pitchers'], ['signs', 'Signs'], ['track', 'Live tracker']];
-  const body = { plan: gamePlan, lineup: gameLineup, pitchers: gamePitchers, signs: gameSigns, track: gameTrack }[ui.gameTab]();
+  const tabs = [['live', 'Live game'], ['reports', 'Reports'], ['pitchers', 'Pitchers'], ['plan', 'Game plan'], ['signs', 'Signs'], ['lineup', 'Lineup card']];
+  const body = ({ live: gameLive, reports: gameReports, plan: gamePlan, lineup: gameLineup, pitchers: gamePitchers, signs: gameSigns }[ui.gameTab] || gameLive)();
   return `
   <div class="view-head">
     <div class="eyebrow">Game day${g.opp ? ' · vs ' + esc(g.opp) : ''}</div>
     <h1 class="title">Win the freebie war</h1>
-    <p class="lede">Lineup card, pregame schedule, organization-wide signs and an in-game tracker for QAB’s, freebies and BASES2. Hitting and pitching approach live under Resources.</p>
+    <p class="lede">Track every game live, then pull game, weekend and season reports on freebies, QAB’s, BASES2 and your pitchers’ innings and pitch counts.</p>
   </div>
   <div class="seg" role="group" aria-label="Game day section">${tabs.map(([k, l]) => `<button data-act="gameTab" data-k="${k}" aria-pressed="${ui.gameTab === k}">${l}</button>`).join('')}</div>
   ${body}`;
@@ -1729,71 +1777,374 @@ function availabilityText() {
   return L.join('\n');
 }
 
-function gameTrack() {
-  const g = state.game;
-  const sum = side => FREEBIES.reduce((s, [k]) => s + (g.free[side][k] || 0), 0);
-  const us = sum('us'), them = sum('them');
-  const war = us < them ? ['good', 'Winning the freebie war'] : us > them ? ['bad', 'Losing the freebie war'] : ['even', 'Freebie war even'];
-  const qabPct = Math.min(100, Math.round(g.qab / 18 * 100));
-  const tap = (side, k) => `<span class="tap"><button aria-label="${side} ${k} minus" data-act="free" data-side="${side}" data-k="${k}" data-d="-1">−</button><b>${g.free[side][k] || 0}</b><button aria-label="${side} ${k} plus" data-act="free" data-side="${side}" data-k="${k}" data-d="1">+</button></span>`;
-  const arms = g.arms.map(a => {
-    const p = a.log.length, s = a.log.filter(x => x === 's').length;
-    const pct = p ? Math.round(s / p * 100) : 0;
-    const lim = Number(a.limit) || 0;
-    return `<div class="arm">
-      <div class="row" style="justify-content:space-between;align-items:center"><strong>${esc(a.name || 'Unnamed pitcher')} <small style="color:var(--muted)">· ${esc(a.role)}</small></strong></div>
-      <div class="arm-stats">
-        <span class="${lim && p >= lim ? 'warn' : ''}">Pitches<b>${p}${lim ? `<small style="font-size:16px;color:var(--muted)"> / ${lim}</small>` : ''}</b></span>
-        <span>Strikes<b>${s}</b></span>
-        <span class="${p >= 5 ? (pct >= 70 ? 'ok' : 'warn') : ''}">Strike %<b>${p ? pct + '%' : '—'}</b></span>
-      </div>
-      ${lim ? `<div class="bar" aria-hidden="true"><i style="width:${Math.min(100, p / lim * 100)}%"></i></div>` : ''}
+/* ---------- Game tracker + reports ----------
+   Every game is a record in state.games (one may be "live"). Finishing a game writes its pitching
+   lines to the workload log as outings tagged with the game id, so editing or deleting a game keeps
+   the workload in sync. Records carry ids and updatedAt for a future team sync. */
+const TEAM_STATS = [
+  ['bid', "BID's", 'Ball-in-dirt reads', 'win'], ['blocks', 'Blocks', 'Catcher blocks', 'win'], ['lob', 'LOB', 'Runners left on base', 'lose'],
+  ['k', 'Strikeouts', 'Mental game: lose', 'lose'], ['merr', 'Mental errors', 'Bad decision or tantrum', 'lose'],
+  ['dirt', 'Dirt Bag', 'Mental game: win', 'win'], ['big', 'Big Play', 'Clutch play', 'win'],
+];
+function blankLiveGame(from = {}) {
+  return { id: uid(), status: 'live', date: from.date || today(), opp: from.opp || '', event: from.event || '', us: 0, them: 0,
+    qab: 0, ab: 0, free: { us: {}, them: {} }, bases: {}, stats: {}, pitchers: [], notes: '', createdAt: Date.now(), updatedAt: Date.now() };
+}
+const games = () => (state.games || []).filter(g => !g.deleted);
+const liveGame = () => games().find(g => g.status === 'live');
+const gameById = id => games().find(g => g.id === id);
+const touch = g => { g.updatedAt = Date.now(); save(); };
+const freeTotal = (g, side) => FREEBIES.reduce((s, [k]) => s + (g.free[side][k] || 0), 0);
+function freeResult(g) { const u = freeTotal(g, 'us'), t = freeTotal(g, 'them'); return u < t ? 'W' : u > t ? 'L' : 'T'; }
+function gameResult(g) { return g.us > g.them ? 'W' : g.us < g.them ? 'L' : 'T'; }
+const pct = (a, b) => b ? Math.round(a / b * 100) : null;
+
+/* Pitching lines -> workload outings */
+function syncOutings(g) {
+  (state.outings || []).forEach(o => { if (o.gameId === g.id && !o.deleted) { o.deleted = true; o.updatedAt = Date.now(); } });
+  if (g.status !== 'final' || g.deleted) return;
+  g.pitchers.filter(p => p.pid && (p.pitches > 0 || p.outs > 0))
+    .forEach(p => state.outings.push({ id: uid(), pid: p.pid, date: g.date, pitches: p.pitches || 0, outs: p.outs || 0, opp: g.opp, gameId: g.id, updatedAt: Date.now() }));
+}
+
+/* ---------- Live game ---------- */
+function gameLive() {
+  const g = liveGame();
+  if (!g) {
+    const last = games().filter(x => x.status === 'final').sort((a, b) => b.date.localeCompare(a.date))[0];
+    return `<section class="panel start-game">
+      <h2 class="sec">Track a game</h2>
+      <p class="lede" style="font-size:15px">Score, quality at-bats, the freebie war, BASES2, the mental game and every pitcher’s pitches and innings, all in one place. When you finish, it’s saved to your season reports and pitcher workload.</p>
       <div class="row">
-        <button class="btn" data-act="pitch" data-aid="${a.id}" data-v="b">+ Ball</button>
-        <button class="btn primary" data-act="pitch" data-aid="${a.id}" data-v="s">+ Strike / in play</button>
-        <button class="btn ghost" data-act="pitch" data-aid="${a.id}" data-v="undo" ${p ? '' : 'disabled'}>Undo</button>
+        <label class="field" style="flex:2 1 200px"><span>Opponent</span><input type="text" id="ngOpp" value="${esc(state.game.opp || '')}" placeholder="Opponent"></label>
+        <label class="field" style="flex:1 1 140px"><span>Date</span><input type="date" id="ngDate" value="${esc(state.game.date || today())}"></label>
+        <label class="field" style="flex:2 1 200px"><span>Event / weekend</span><input type="text" id="ngEvent" value="${esc(last?.event && daysBetween(last.date, today()) < 4 ? last.event : '')}" placeholder="e.g. Fall Classic"></label>
       </div>
+      <div><button class="btn primary" data-act="startGame">Start game</button></div>
+    </section>
+    ${games().length ? `<p class="lede">Finished games are in <button class="linkbtn" data-act="gameTab" data-k="reports">Reports</button>.</p>` : ''}`;
+  }
+  const us = freeTotal(g, 'us'), them = freeTotal(g, 'them');
+  const war = us < them ? ['good', 'Winning the freebie war'] : us > them ? ['bad', 'Losing the freebie war'] : ['even', 'Freebie war even'];
+  const step = (act, extra, val, label, cls = '') => `<span class="tap ${cls}"><button aria-label="${label} minus" data-act="${act}" ${extra} data-d="-1">−</button><b>${val}</b><button class="plus" aria-label="${label} plus" data-act="${act}" ${extra} data-d="1">+</button></span>`;
+  const R = activeRoster(), pitchersFirst = [...R.filter(p => canPlay(p, 'P')), ...R.filter(p => !canPlay(p, 'P'))];
+  const pRows = g.pitchers.map(pi => {
+    const lim = Workload.rules().max, sp = pi.strikes ? pct(pi.strikes, pi.pitches || 0) : null;
+    return `<div class="arm">
+      <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
+        <label class="field" style="flex:1 1 180px"><span class="sr">Pitcher</span>
+          <select data-gp="pid" data-pi="${pi.id}" id="gp-${pi.id}"><option value="">Choose pitcher…</option>${pitchersFirst.map(p => `<option value="${p.id}" ${p.id === pi.pid ? 'selected' : ''}>${esc(playerLabel(p))}</option>`).join('')}<option value="__new">+ New player…</option></select></label>
+        <button class="btn ghost sm danger" data-act="rmGP" data-pi="${pi.id}" aria-label="Remove pitcher">✕</button>
+      </div>
+      <div class="arm-stats">
+        <span class="${pi.pitches > lim ? 'warn' : ''}">Pitches<b>${pi.pitches || 0}</b></span>
+        <span>Strike %<b>${sp == null ? '—' : sp + '%'}</b></span>
+        <span>IP<b>${ipFromOuts(pi.outs || 0)}</b></span>
+      </div>
+      <div class="row">
+        <button class="btn" data-act="gPitch" data-pi="${pi.id}" data-v="b">+ Ball</button>
+        <button class="btn primary" data-act="gPitch" data-pi="${pi.id}" data-v="s">+ Strike</button>
+        <button class="btn" data-act="gOut" data-pi="${pi.id}" data-d="1">+ Out</button>
+        <button class="btn ghost" data-act="gPitch" data-pi="${pi.id}" data-v="undo" ${(pi.last || []).length ? '' : 'disabled'}>Undo</button>
+      </div>
+      <div class="row small-steps">
+        <span class="mini">QINN ${step('gpStat', `data-pi="${pi.id}" data-k="qinn"`, pi.qinn || 0, 'Quality innings')}</span>
+        <span class="mini">LOBO ${step('gpStat', `data-pi="${pi.id}" data-k="lobo"`, pi.lobo || 0, 'Lead-off batter out')}</span>
+        <span class="mini">Outs ${step('gOut', `data-pi="${pi.id}"`, pi.outs || 0, 'Outs')}</span>
+      </div>
+      <details class="wl-history"><summary>Type totals instead (from GameChanger)</summary>
+        <div class="row">
+          <label class="field" style="flex:1 1 90px"><span>Pitches</span><input type="number" inputmode="numeric" min="0" value="${pi.pitches || 0}" data-gp="pitches" data-pi="${pi.id}" id="gpp-${pi.id}"></label>
+          <label class="field" style="flex:1 1 90px"><span>Strikes</span><input type="number" inputmode="numeric" min="0" value="${pi.strikes || 0}" data-gp="strikes" data-pi="${pi.id}" id="gps-${pi.id}"></label>
+          <label class="field" style="flex:1 1 90px"><span>Innings</span><input type="text" inputmode="decimal" value="${ipFromOuts(pi.outs || 0)}" data-gp="ip" data-pi="${pi.id}" id="gpi-${pi.id}"></label>
+        </div>
+      </details>
     </div>`;
   }).join('');
   return `
+  <section class="panel scoreboard">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div><div class="eyebrow">Live · ${esc(fmtDate(g.date))}${g.event ? ' · ' + esc(g.event) : ''}</div>
+        <h2 class="sec">vs ${esc(g.opp || 'Opponent')}</h2></div>
+      <button class="btn ghost sm" data-act="editGameInfo">Edit</button>
+    </div>
+    ${ui.editInfo ? `<div class="row">
+        <label class="field" style="flex:2 1 180px"><span>Opponent</span><input type="text" id="lgOpp" value="${esc(g.opp)}" data-lg="opp"></label>
+        <label class="field" style="flex:1 1 140px"><span>Date</span><input type="date" id="lgDate" value="${esc(g.date)}" data-lg="date"></label>
+        <label class="field" style="flex:2 1 180px"><span>Event / weekend</span><input type="text" id="lgEvent" value="${esc(g.event)}" data-lg="event"></label>
+      </div>` : ''}
+    <div class="score">
+      <div><span>FCA</span>${step('score', 'data-side="us"', g.us, 'Our runs', 'big-tap')}</div>
+      <div><span>${esc(g.opp || 'Them')}</span>${step('score', 'data-side="them"', g.them, 'Their runs', 'big-tap')}</div>
+    </div>
+  </section>
+
   <div class="two">
     <section class="panel">
       <h2 class="sec">Quality at-bats</h2>
-      <div class="counter">
-        <button aria-label="QAB minus" data-act="qab" data-d="-1">−</button>
-        <span class="big">${g.qab}</span>
-        <button class="plus" aria-label="QAB plus" data-act="qab" data-d="1">+</button>
-        <span style="color:var(--muted)">of 18 goal</span>
+      <div class="row" style="gap:18px">
+        <span class="mini">QAB ${step('gStat', 'data-k="qab"', g.qab, 'Quality at-bats', 'big-tap')}</span>
+        <span class="mini">AB ${step('gStat', 'data-k="ab"', g.ab, 'At-bats', 'big-tap')}</span>
       </div>
-      <div class="bar" aria-hidden="true"><i style="width:${qabPct}%"></i></div>
+      <p class="lede" style="font-size:14px">${g.qab} of 18 goal${g.ab ? ` · ${pct(g.qab, g.ab)}% of at-bats (goal 60%)` : ''}</p>
+      <div class="bar" aria-hidden="true"><i style="width:${Math.min(100, g.qab / 18 * 100)}%"></i></div>
     </section>
     <section class="panel">
       <h2 class="sec">BASES2</h2>
-      <div class="chips">${BASES2.map(([l, name, note], i) => `<button class="filter" title="${esc(note)}" data-act="bases" data-i="${i}" aria-pressed="${!!g.bases[i]}">${l} · ${name}</button>`).join('')}</div>
+      <div class="chips">${BASES2.map(([l, name, note], i) => `<button class="filter" title="${esc(note)}" data-act="gBases" data-i="${i}" aria-pressed="${!!g.bases[i]}">${l} · ${name}</button>`).join('')}</div>
       <p class="lede" style="font-size:14px">${Object.values(g.bases).filter(Boolean).length} of 6 executed.</p>
     </section>
   </div>
+
   <section class="panel">
     <div class="row" style="justify-content:space-between;align-items:center">
-      <h2 class="sec">Freebie war</h2>
-      <span class="pill ${war[0]}">${war[1]}</span>
+      <h2 class="sec">Freebie war</h2><span class="pill ${war[0]}">${war[1]}</span>
     </div>
     <div class="table-wrap"><table class="freebies">
       <thead><tr><th>Freebie</th><th>We gave</th><th>They gave</th></tr></thead>
-      <tbody>${FREEBIES.map(([k, n]) => `<tr><td><b>${k}</b> <small style="color:var(--muted)">${n}</small></td><td>${tap('us', k)}</td><td>${tap('them', k)}</td></tr>`).join('')}
+      <tbody>${FREEBIES.map(([k, n]) => `<tr><td><b>${k}</b> <small style="color:var(--muted)">${n}</small></td><td>${step('gFree', `data-side="us" data-k="${k}"`, g.free.us[k] || 0, 'We gave ' + k)}</td><td>${step('gFree', `data-side="them" data-k="${k}"`, g.free.them[k] || 0, 'They gave ' + k)}</td></tr>`).join('')}
         <tr><td><b>Total</b></td><td><b class="big" style="font-size:28px">${us}</b></td><td><b class="big" style="font-size:28px">${them}</b></td></tr></tbody>
     </table></div>
   </section>
+
   <section class="panel">
-    <h2 class="sec">Pitch counts</h2>
-    <p class="lede" style="font-size:14px">Goal: 70% strikes. Add or rename pitchers on the Game plan tab.</p>
-    ${arms || '<p class="empty">No pitchers yet. Add them on the Game plan tab.</p>'}
+    <h2 class="sec">Pitching</h2>
+    ${pRows || '<p class="lede" style="font-size:14px">Add each pitcher who throws. Tap + Ball / + Strike every pitch, and + Out for each out, or type the totals from GameChanger.</p>'}
+    <div><button class="btn" data-act="addGP">+ Add pitcher</button></div>
   </section>
+
+  <section class="panel">
+    <h2 class="sec">Team stats & mental game</h2>
+    <div class="stat-grid">${TEAM_STATS.map(([k, label, note, tone]) => `<div class="stat ${tone}"><span>${label}<small>${note}</small></span>${step('gStat2', `data-k="${k}"`, g.stats[k] || 0, label)}</div>`).join('')}</div>
+    <label class="field"><span>Game notes</span><textarea id="lgNotes" data-lg="notes" rows="2" placeholder="Big moments, what to work on…">${esc(g.notes)}</textarea></label>
+  </section>
+
   <div class="row no-print">
-    ${ui.confirm === 'track'
-      ? `<span class="callout">Reset QAB’s, freebies, BASES2 and pitch counts?</span><button class="btn danger" data-act="resetTrack">Reset</button><button class="btn ghost" data-act="cancelConfirm">Keep</button>`
-      : `<button class="btn ghost danger" data-act="askResetTrack">Reset tracker</button>`}
+    <button class="btn primary" data-act="finishGame">Finish game</button>
+    ${ui.confirm === 'discard'
+      ? `<span class="callout">Discard this game? Nothing is saved.</span><button class="btn danger" data-act="discardGame">Discard</button><button class="btn ghost" data-act="cancelConfirm">Keep</button>`
+      : `<button class="btn ghost danger" data-act="askDiscard">Discard game</button>`}
   </div>`;
+}
+
+/* ---------- Reports ---------- */
+function weekendDefault() {
+  // Most recent Fri–Sun window that includes or precedes today.
+  const d = new Date(today() + 'T12:00:00'), dow = d.getDay(); // 0 Sun … 6 Sat
+  const back = dow === 0 ? 2 : dow === 6 ? 1 : dow === 5 ? 0 : dow + 2;
+  const fri = addDays(today(), -back);
+  return [fri, addDays(fri, 2)];
+}
+function summarize(list) {
+  const s = { n: list.length, W: 0, L: 0, T: 0, fW: 0, fL: 0, fT: 0, freeUs: {}, freeThem: {}, fu: 0, ft: 0, qab: 0, ab: 0, bases: [0, 0, 0, 0, 0, 0], stats: {}, runs: 0, ra: 0 };
+  for (const g of list) {
+    s[gameResult(g)]++; s['f' + freeResult(g)]++;
+    s.runs += g.us; s.ra += g.them; s.qab += g.qab; s.ab += g.ab;
+    FREEBIES.forEach(([k]) => { s.freeUs[k] = (s.freeUs[k] || 0) + (g.free.us[k] || 0); s.freeThem[k] = (s.freeThem[k] || 0) + (g.free.them[k] || 0); });
+    s.fu += freeTotal(g, 'us'); s.ft += freeTotal(g, 'them');
+    BASES2.forEach((_, i) => { if (g.bases[i]) s.bases[i]++; });
+    TEAM_STATS.forEach(([k]) => { s.stats[k] = (s.stats[k] || 0) + (g.stats[k] || 0); });
+  }
+  return s;
+}
+function pitcherLines(list) {
+  const byId = rosterById(), map = new Map();
+  for (const g of list) for (const p of g.pitchers) {
+    if (!(p.pitches || p.outs)) continue;
+    const key = p.pid || 'name:' + (p.name || '?');
+    const r = map.get(key) || { key, pid: p.pid, name: p.pid && byId[p.pid] ? playerLabel(byId[p.pid]) : (p.name || 'Unknown'), g: 0, outs: 0, pitches: 0, strikes: 0, qinn: 0, lobo: 0, last: '' };
+    r.g++; r.outs += p.outs || 0; r.pitches += p.pitches || 0; r.strikes += p.strikes || 0; r.qinn += p.qinn || 0; r.lobo += p.lobo || 0;
+    if (g.date > r.last) r.last = g.date;
+    map.set(key, r);
+  }
+  return [...map.values()].sort((a, b) => b.pitches - a.pitches);
+}
+function rangeGames(from, to) { return games().filter(g => g.status === 'final' && g.date >= from && g.date <= to).sort((a, b) => a.date.localeCompare(b.date)); }
+
+function chartFreebies(list) {
+  // Freebie margin per game: (their freebies − ours). Above zero = we won the freebie war.
+  if (list.length < 2) return '';
+  const W = 420, H = 150, pad = { l: 30, r: 6, t: 12, b: 24 };
+  const vals = list.map(g => freeTotal(g, 'them') - freeTotal(g, 'us'));
+  const m = Math.max(3, ...vals.map(Math.abs));
+  const bw = Math.min(28, (W - pad.l - pad.r) / list.length - 4);
+  const y0 = pad.t + (H - pad.t - pad.b) / 2, sy = (H - pad.t - pad.b) / 2 / m;
+  const bars = list.map((g, i) => {
+    const v = vals[i], x = pad.l + (i + .5) * (W - pad.l - pad.r) / list.length - bw / 2, h = Math.max(2, Math.abs(v) * sy);
+    const y = v >= 0 ? y0 - h : y0;
+    const tip = `${fmtDate(g.date)} vs ${g.opp || 'Opponent'}: we gave ${freeTotal(g, 'us')}, they gave ${freeTotal(g, 'them')} (${v > 0 ? 'won' : v < 0 ? 'lost' : 'even'})`;
+    return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" class="${v > 0 ? 'm-good' : v < 0 ? 'm-bad' : 'm-even'}" data-tip="${esc(tip)}"><title>${esc(tip)}</title></rect>`;
+  }).join('');
+  return `<figure class="chart"><figcaption>Freebie war by game <small>Bars above the line = we gave fewer freebies than the other team</small></figcaption>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Freebie margin per game">
+      <line x1="${pad.l}" x2="${W - pad.r}" y1="${y0}" y2="${y0}" class="axis"/>
+      <text x="${pad.l - 6}" y="${pad.t + 8}" class="tick" text-anchor="end">+${m}</text><text x="${pad.l - 6}" y="${y0 + 4}" class="tick" text-anchor="end">0</text><text x="${pad.l - 6}" y="${H - pad.b}" class="tick" text-anchor="end">−${m}</text>
+      ${bars}
+      <text x="${pad.l}" y="${H - 6}" class="tick">${esc(fmtDate(list[0].date))}</text><text x="${W - pad.r}" y="${H - 6}" class="tick" text-anchor="end">${esc(fmtDate(list[list.length - 1].date))}</text>
+    </svg></figure>`;
+}
+function chartQab(list) {
+  if (list.length < 2) return '';
+  const W = 420, H = 130, pad = { l: 30, r: 6, t: 12, b: 24 };
+  const m = Math.max(20, ...list.map(g => g.qab));
+  const sy = (H - pad.t - pad.b) / m, base = H - pad.b;
+  const bw = Math.min(28, (W - pad.l - pad.r) / list.length - 4);
+  const bars = list.map((g, i) => {
+    const x = pad.l + (i + .5) * (W - pad.l - pad.r) / list.length - bw / 2, h = Math.max(2, g.qab * sy);
+    const tip = `${fmtDate(g.date)} vs ${g.opp || 'Opponent'}: ${g.qab} QAB${g.ab ? ` of ${g.ab} AB (${pct(g.qab, g.ab)}%)` : ''}`;
+    return `<rect x="${x.toFixed(1)}" y="${(base - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" class="m-qab" data-tip="${esc(tip)}"><title>${esc(tip)}</title></rect>`;
+  }).join('');
+  const gy = base - 18 * sy;
+  return `<figure class="chart"><figcaption>Quality at-bats by game <small>Dashed line = 18 QAB goal</small></figcaption>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Quality at-bats per game">
+      <line x1="${pad.l}" x2="${W - pad.r}" y1="${base}" y2="${base}" class="axis"/>
+      <line x1="${pad.l}" x2="${W - pad.r}" y1="${gy}" y2="${gy}" class="goal"/>
+      <text x="${pad.l - 6}" y="${gy + 4}" class="tick" text-anchor="end">18</text><text x="${pad.l - 6}" y="${base + 4}" class="tick" text-anchor="end">0</text>
+      ${bars}
+      <text x="${pad.l}" y="${H - 6}" class="tick">${esc(fmtDate(list[0].date))}</text><text x="${W - pad.r}" y="${H - 6}" class="tick" text-anchor="end">${esc(fmtDate(list[list.length - 1].date))}</text>
+    </svg></figure>`;
+}
+function reportBody(list, { title, withRest = false, charts = true } = {}) {
+  if (!list.length) return `<p class="empty">No finished games ${title ? 'in this range' : 'yet'}.</p>`;
+  const s = summarize(list), lines = pitcherLines(list), day = today();
+  const tile = (label, value, note, tone = '') => `<div class="tile ${tone}"><span>${label}</span><b>${value}</b>${note ? `<small>${note}</small>` : ''}</div>`;
+  return `
+  <div class="tiles">
+    ${tile('Record', `${s.W}-${s.L}${s.T ? '-' + s.T : ''}`, `${s.runs} runs for · ${s.ra} against`)}
+    ${tile('Freebie war', `${s.fW}-${s.fL}${s.fT ? '-' + s.fT : ''}`, `We gave ${s.fu} · they gave ${s.ft}`, s.fW > s.fL ? 'good' : s.fW < s.fL ? 'bad' : '')}
+    ${tile('Quality at-bats', `${(s.qab / s.n).toFixed(1)}<small>/game</small>`, s.ab ? `${pct(s.qab, s.ab)}% of ${s.ab} AB · goal 60%` : 'Goal 18 per game', s.ab && pct(s.qab, s.ab) >= 60 ? 'good' : '')}
+    ${tile('Freebies given', `${(s.fu / s.n).toFixed(1)}<small>/game</small>`, `Received ${(s.ft / s.n).toFixed(1)} per game`)}
+  </div>
+  ${charts ? chartFreebies(list) + chartQab(list) : ''}
+  <div class="two">
+    <div><h3 class="sub">Freebies</h3><div class="table-wrap"><table class="signs rep">
+      <thead><tr><th></th><th>We gave</th><th>They gave</th></tr></thead>
+      <tbody>${FREEBIES.map(([k, n]) => `<tr><th>${k}</th><td>${s.freeUs[k] || 0}</td><td>${s.freeThem[k] || 0}</td></tr>`).join('')}
+      <tr><th>Total</th><td><b>${s.fu}</b></td><td><b>${s.ft}</b></td></tr></tbody></table></div></div>
+    <div><h3 class="sub">BASES2 · games executed</h3><div class="table-wrap"><table class="signs rep">
+      <tbody>${BASES2.map(([l, n], i) => `<tr><th>${l}</th><td>${n}</td><td><b>${s.bases[i]}</b>/${s.n}</td></tr>`).join('')}</tbody></table></div></div>
+  </div>
+  <h3 class="sub">Team stats & mental game</h3>
+  <div class="table-wrap"><table class="signs rep"><tbody><tr>${TEAM_STATS.map(([k, l]) => `<td><small>${l}</small><br><b>${s.stats[k] || 0}</b></td>`).join('')}</tr></tbody></table></div>
+  <h3 class="sub">Pitchers</h3>
+  ${lines.length ? `<div class="table-wrap"><table class="signs rep pit">
+    <thead><tr><th>Pitcher</th><th>G</th><th>IP</th><th>Pitches</th><th>Strike %</th><th>QINN</th><th>LOBO</th>${withRest ? '<th>Status today</th>' : ''}</tr></thead>
+    <tbody>${lines.map(r => { const st = withRest && r.pid ? Workload.status(r.pid, day) : null; return `<tr><td class="nm">${esc(r.name)}</td><td>${r.g}</td><td>${ipFromOuts(r.outs)}</td><td><b>${r.pitches}</b></td><td>${r.strikes ? pct(r.strikes, r.pitches) + '%' : '—'}</td><td>${r.qinn}</td><td>${r.lobo}</td>${withRest ? `<td>${st ? (st.state === 'rest' ? `<span class="pill bad">Rest → ${esc(fmtDate(st.availableOn))}</span>` : '<span class="pill good">Available</span>') : '—'}</td>` : ''}</tr>`; }).join('')}</tbody>
+  </table></div>` : '<p class="lede" style="font-size:14px">No pitching lines entered.</p>'}`;
+}
+function gameRow(g) {
+  const fr = freeResult(g);
+  return `<button class="game-row" data-act="viewGame" data-id="${g.id}">
+    <span class="gr-date">${esc(fmtDate(g.date))}</span>
+    <span class="gr-opp">vs ${esc(g.opp || 'Opponent')}${g.event ? `<small>${esc(g.event)}</small>` : ''}</span>
+    <span class="gr-score"><b class="${gameResult(g) === 'W' ? 'w' : gameResult(g) === 'L' ? 'l' : ''}">${gameResult(g)}</b> ${g.us}–${g.them}</span>
+    <span class="pill ${fr === 'W' ? 'good' : fr === 'L' ? 'bad' : 'even'}">Freebies ${freeTotal(g, 'us')}–${freeTotal(g, 'them')}</span>
+  </button>`;
+}
+function gameReports() {
+  const fin = games().filter(g => g.status === 'final').sort((a, b) => a.date.localeCompare(b.date));
+  const mode = ui.repMode || 'weekend';
+  const [df, dt] = weekendDefault();
+  const from = ui.repFrom || df, to = ui.repTo || dt;
+  const list = mode === 'season' ? fin : rangeGames(from, to);
+  return `
+  <div class="seg" role="group" aria-label="Report">${[['weekend', 'Weekend / date range'], ['season', 'Season to date'], ['games', 'Games']].map(([k, l]) => `<button data-act="repMode" data-k="${k}" aria-pressed="${mode === k}">${l}</button>`).join('')}</div>
+  ${mode === 'games' ? `<section class="panel">
+      <h2 class="sec">Games · ${fin.length}</h2>
+      ${fin.length ? `<div class="game-list">${[...fin].reverse().map(gameRow).join('')}</div>` : '<p class="empty">No finished games yet. Track one on the Live game tab.</p>'}
+    </section>`
+  : `<section class="panel">
+      ${mode === 'weekend' ? `<div class="row" style="align-items:end">
+        <label class="field" style="flex:1 1 140px"><span>From</span><input type="date" id="repFrom" value="${from}" data-rep="from"></label>
+        <label class="field" style="flex:1 1 140px"><span>To</span><input type="date" id="repTo" value="${to}" data-rep="to"></label>
+        <button class="btn ghost sm" data-act="repThisWeekend">This weekend</button>
+      </div>` : ''}
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 class="sec">${mode === 'season' ? 'Season to date' : `${esc(fmtDate(from))} – ${esc(fmtDate(to))}`}</h2>
+        <span class="meta">${list.length} game${list.length === 1 ? '' : 's'}</span>
+      </div>
+      ${mode === 'weekend' && list.length ? `<div class="game-list">${list.map(gameRow).join('')}</div>` : ''}
+      ${reportBody(list, { title: mode, withRest: mode === 'weekend' })}
+      ${list.length ? `<div class="row no-print">
+        <button class="btn primary" data-act="pdf" data-kind="${mode}" data-mode="save">Save report PDF</button>
+        <button class="btn" data-act="copyReport">Copy as text</button>
+      </div>` : ''}
+    </section>`}`;
+}
+
+function viewGame(id) {
+  const g = gameById(id); if (!g) return;
+  openDialog(`
+    <div class="dlg-head" style="position:relative">
+      <div class="meta"><span class="tag">${esc(fmtDate(g.date))}</span>${g.event ? `<span>${esc(g.event)}</span>` : ''}</div>
+      <h2 class="sec" id="dlgTitle" style="padding-right:48px">${gameResult(g)} ${g.us}–${g.them} vs ${esc(g.opp || 'Opponent')}</h2>
+      <button class="btn ghost close" data-act="close" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">${reportBody([g], { charts: false })}${g.notes ? `<h3 class="sub">Notes</h3><p>${esc(g.notes)}</p>` : ''}</div>
+    <div class="dlg-foot">
+      <button class="btn primary" data-act="pdf" data-kind="game" data-id="${g.id}" data-mode="save">Save PDF</button>
+      <button class="btn" data-act="copyGameReport" data-id="${g.id}">Copy as text</button>
+      <button class="btn ghost" data-act="reopenGame" data-id="${g.id}">Edit game</button>
+      ${ui.confirm === 'del-' + g.id ? `<button class="btn danger" data-act="deleteGame" data-id="${g.id}">Delete for good</button>` : `<button class="btn ghost danger" data-act="askDeleteGame" data-id="${g.id}">Delete</button>`}
+    </div>`);
+}
+
+function reportText(list, heading) {
+  const s = summarize(list), L = [heading, ''];
+  if (!list.length) return heading + '\nNo games.';
+  list.forEach(g => L.push(`${fmtDate(g.date)}  vs ${g.opp || 'Opponent'}  ${gameResult(g)} ${g.us}-${g.them}  · freebies ${freeTotal(g, 'us')}-${freeTotal(g, 'them')} · QAB ${g.qab}${g.ab ? '/' + g.ab : ''}`));
+  L.push('', `Record ${s.W}-${s.L}${s.T ? '-' + s.T : ''} · Freebie war ${s.fW}-${s.fL}${s.fT ? '-' + s.fT : ''} (we gave ${s.fu}, they gave ${s.ft})`);
+  L.push(`QAB ${s.qab}${s.ab ? ' of ' + s.ab + ' AB (' + pct(s.qab, s.ab) + '%)' : ''} · ${(s.qab / s.n).toFixed(1)} per game`);
+  L.push('Freebies given: ' + FREEBIES.map(([k]) => `${k} ${s.freeUs[k] || 0}`).join(', '));
+  L.push('BASES2: ' + BASES2.map(([l, n], i) => `${n} ${s.bases[i]}/${s.n}`).join(', '));
+  L.push(TEAM_STATS.map(([k, l]) => `${l} ${s.stats[k] || 0}`).join(' · '));
+  const lines = pitcherLines(list);
+  if (lines.length) { L.push('', 'Pitchers'); lines.forEach(r => L.push(`  ${r.name}: ${r.g} G, ${ipFromOuts(r.outs)} IP, ${r.pitches} pitches${r.strikes ? ' (' + pct(r.strikes, r.pitches) + '% strikes)' : ''}, QINN ${r.qinn}, LOBO ${r.lobo}`)); }
+  return L.join('\n');
+}
+
+/* ---------- Report PDFs ---------- */
+async function reportPdf(kind, id, mode, win) {
+  const doc = await newPdf();
+  let list, title, sub;
+  if (kind === 'game') { const g = gameById(id); list = [g]; title = `vs ${g.opp || 'Opponent'}`; sub = `${fmtDate(g.date)}${g.event ? '  ·  ' + g.event : ''}  ·  ${gameResult(g)} ${g.us}-${g.them}`; }
+  else if (kind === 'season') { list = games().filter(g => g.status === 'final').sort((a, b) => a.date.localeCompare(b.date)); title = 'Season Report'; sub = list.length ? `${fmtDate(list[0].date)} - ${fmtDate(list[list.length - 1].date)}  ·  ${list.length} games` : ''; }
+  else { const [df, dt] = weekendDefault(); const f = ui.repFrom || df, t = ui.repTo || dt; list = rangeGames(f, t); title = 'Weekend Report'; sub = `${fmtDate(f)} - ${fmtDate(t)}  ·  ${list.length} game${list.length === 1 ? '' : 's'}`; }
+  const s = summarize(list);
+  let y = pdfHeader(doc, kind === 'game' ? 'Game Report' : kind === 'season' ? 'Season Report' : 'Weekend Report', title, sub);
+  const base = pdfTableBase();
+  if (kind !== 'game') {
+    doc.autoTable({ ...base, startY: y, head: [['Date', 'Opponent', 'Result', 'Freebies (us-them)', 'QAB']],
+      body: list.map(g => [fmtDate(g.date), pdfSafe(g.opp || ''), `${gameResult(g)} ${g.us}-${g.them}`, `${freeTotal(g, 'us')}-${freeTotal(g, 'them')} (${freeResult(g)})`, `${g.qab}${g.ab ? '/' + g.ab : ''}`]) });
+    y = doc.lastAutoTable.finalY + 18;
+  }
+  doc.autoTable({ ...base, startY: y, head: [['Record', 'Freebie war', 'Freebies given / received', 'QAB per game', 'QAB %']],
+    body: [[`${s.W}-${s.L}${s.T ? '-' + s.T : ''}`, `${s.fW}-${s.fL}${s.fT ? '-' + s.fT : ''}`, `${s.fu} / ${s.ft}`, (s.qab / s.n).toFixed(1), s.ab ? pct(s.qab, s.ab) + '%' : '-']],
+    styles: { ...base.styles, halign: 'center', fontStyle: 'bold' } });
+  y = doc.lastAutoTable.finalY + 18;
+  y = pdfRoom(doc, y, 160);
+  doc.autoTable({ ...base, startY: y, margin: { left: PDF.M, right: PDF.W / 2 + 6 }, head: [['Freebie', 'We gave', 'They gave']],
+    body: [...FREEBIES.map(([k, n]) => [`${k}  ${n}`, s.freeUs[k] || 0, s.freeThem[k] || 0]), ['Total', s.fu, s.ft]],
+    columnStyles: { 1: { halign: 'center' }, 2: { halign: 'center' } } });
+  const yL = doc.lastAutoTable.finalY;
+  doc.autoTable({ ...base, startY: y, margin: { left: PDF.W / 2 + 6, right: PDF.M }, head: [['BASES2', 'Games']],
+    body: BASES2.map(([l, n], i) => [`${l}  ${n}`, `${s.bases[i]} / ${s.n}`]), columnStyles: { 1: { halign: 'center' } } });
+  y = Math.max(yL, doc.lastAutoTable.finalY) + 18;
+  y = pdfRoom(doc, y, 70);
+  doc.autoTable({ ...base, startY: y, head: [TEAM_STATS.map(([, l]) => l)], body: [TEAM_STATS.map(([k]) => s.stats[k] || 0)], styles: { ...base.styles, halign: 'center' } });
+  y = doc.lastAutoTable.finalY + 18;
+  const lines = pitcherLines(list), day = today();
+  if (lines.length) {
+    y = pdfRoom(doc, y, 80); y = pdfSection(doc, y, 'Pitchers');
+    doc.autoTable({ ...base, startY: y, head: [['Pitcher', 'G', 'IP', 'Pitches', 'Strike %', 'QINN', 'LOBO', ...(kind === 'game' ? [] : ['Status today'])]],
+      body: lines.map(r => { const st = r.pid ? Workload.status(r.pid, day) : null; return [pdfSafe(r.name), r.g, ipFromOuts(r.outs), r.pitches, r.strikes ? pct(r.strikes, r.pitches) + '%' : '-', r.qinn, r.lobo, ...(kind === 'game' ? [] : [st ? (st.state === 'rest' ? 'Rest, available ' + fmtDate(st.availableOn) : 'Available') : '-'])]; }),
+      columnStyles: { 1: { halign: 'center' }, 2: { halign: 'center' }, 3: { halign: 'center', fontStyle: 'bold' }, 4: { halign: 'center' }, 5: { halign: 'center' }, 6: { halign: 'center' } } });
+    y = doc.lastAutoTable.finalY + 18;
+  }
+  if (kind === 'game' && list[0].notes) { y = pdfRoom(doc, y, 60); y = pdfSection(doc, y, 'Notes'); doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(...PDF.ink); doc.text(doc.splitTextToSize(pdfSafe(list[0].notes), PDF.W - 2 * PDF.M), PDF.M, y + 4); }
+  pdfFooters(doc);
+  const name = kind === 'game' ? `FCA-Game-${fileSafe(list[0].opp) || 'Report'}-${list[0].date}` : kind === 'season' ? `FCA-Season-Report-${today()}` : `FCA-Weekend-Report-${ui.repFrom || weekendDefault()[0]}`;
+  await deliverPdf(doc, name + '.pdf', mode, win);
 }
 
 /* ========================== RESOURCES ========================== */
@@ -2537,11 +2888,16 @@ async function lineupPdf(mode, win) {
   await deliverPdf(doc, `FCA-Lineup-${fileSafe(g.opp) || 'Card'}-${g.date || ''}.pdf`, mode, win);
 }
 
-async function makePdf(kind, mode) {
+async function makePdf(kind, mode, id) {
   // Open the print tab now, while the click still counts as a user action, so popup blockers allow it.
   const win = mode === 'print' ? window.open('', '_blank') : null;
   toast('Building PDF…');
-  try { await (kind === 'lineup' ? lineupPdf : practicePdf)(mode, win); if (mode !== 'print') toast('PDF saved'); }
+  try {
+    if (kind === 'lineup') await lineupPdf(mode, win);
+    else if (kind === 'practice') await practicePdf(mode, win);
+    else await reportPdf(kind, id, mode, win);
+    if (mode !== 'print') toast('PDF saved');
+  }
   catch (e) { if (win) win.close(); console.error(e); toast('Couldn’t build the PDF. Reload the page and try again.'); }
 }
 
@@ -2711,7 +3067,56 @@ const ACTIONS = {
   },
   rmOuting(el) { Workload.remove(el.dataset.id); render(); toast('Outing deleted'); },
   copyAvail() { copyText(availabilityText(), 'Pitcher availability'); },
-  pdf(el) { makePdf(el.dataset.kind, el.dataset.mode); },
+  pdf(el) { makePdf(el.dataset.kind, el.dataset.mode, el.dataset.id); },
+  startGame() {
+    const g = blankLiveGame({ opp: document.getElementById('ngOpp').value.trim(), date: document.getElementById('ngDate').value || today(), event: document.getElementById('ngEvent').value.trim() });
+    state.games.push(g); save(); render(); toast('Game started. Good luck!');
+  },
+  editGameInfo() { ui.editInfo = !ui.editInfo; render(); },
+  score(el) { const g = liveGame(); g[el.dataset.side] = Math.max(0, g[el.dataset.side] + Number(el.dataset.d)); touch(g); render(); },
+  gStat(el) { const g = liveGame(), k = el.dataset.k; g[k] = Math.max(0, (g[k] || 0) + Number(el.dataset.d)); if (k === 'qab' && g.qab > g.ab) g.ab = g.qab; touch(g); render(); },
+  gStat2(el) { const g = liveGame(), k = el.dataset.k; g.stats[k] = Math.max(0, (g.stats[k] || 0) + Number(el.dataset.d)); touch(g); render(); },
+  gFree(el) { const g = liveGame(), f = g.free[el.dataset.side]; f[el.dataset.k] = Math.max(0, (f[el.dataset.k] || 0) + Number(el.dataset.d)); touch(g); render(); },
+  gBases(el) { const g = liveGame(); g.bases[el.dataset.i] = !g.bases[el.dataset.i]; touch(g); render(); },
+  addGP() {
+    const g = liveGame(), used = new Set(g.pitchers.map(p => p.pid));
+    const next = activeRoster().find(p => canPlay(p, 'P') && !used.has(p.id));
+    g.pitchers.push({ id: uid(), pid: next ? next.id : '', pitches: 0, strikes: 0, outs: 0, qinn: 0, lobo: 0, last: [] }); touch(g); render();
+  },
+  rmGP(el) { const g = liveGame(); g.pitchers = g.pitchers.filter(p => p.id !== el.dataset.pi); touch(g); render(); },
+  gPitch(el) {
+    const g = liveGame(), p = g.pitchers.find(x => x.id === el.dataset.pi), v = el.dataset.v;
+    p.last = p.last || [];
+    if (v === 'undo') { const l = p.last.pop(); if (l === 's') { p.strikes--; p.pitches--; } else if (l === 'b') p.pitches--; else if (l === 'o') p.outs--; }
+    else { p.pitches = (p.pitches || 0) + 1; if (v === 's') p.strikes = (p.strikes || 0) + 1; p.last.push(v); }
+    touch(g); render();
+  },
+  gOut(el) { const g = liveGame(), p = g.pitchers.find(x => x.id === el.dataset.pi), d = Number(el.dataset.d); p.outs = Math.max(0, (p.outs || 0) + d); if (d > 0) (p.last = p.last || []).push('o'); touch(g); render(); },
+  gpStat(el) { const g = liveGame(), p = g.pitchers.find(x => x.id === el.dataset.pi), k = el.dataset.k; p[k] = Math.max(0, (p[k] || 0) + Number(el.dataset.d)); touch(g); render(); },
+  finishGame() {
+    const g = liveGame();
+    if (g.pitchers.some(p => !p.pid && (p.pitches || p.outs))) { toast('Choose a name for every pitcher before finishing'); return; }
+    g.status = 'final'; touch(g); syncOutings(g); save();
+    ui.gameTab = 'reports'; ui.repMode = 'games'; ui.editInfo = false; render(); viewGame(g.id);
+    toast('Game saved. Pitch counts were added to the pitcher log.');
+  },
+  askDiscard() { ui.confirm = 'discard'; render(); },
+  discardGame() { const g = liveGame(); g.deleted = true; g.updatedAt = Date.now(); syncOutings(g); ui.confirm = null; save(); render(); toast('Game discarded'); },
+  repMode(el) { ui.repMode = el.dataset.k; render(); },
+  repThisWeekend() { ui.repFrom = ui.repTo = null; render(); },
+  viewGame(el) { ui.confirm = null; viewGame(el.dataset.id); },
+  reopenGame(el) {
+    if (liveGame()) { toast('Finish or discard the game in progress first'); return; }
+    const g = gameById(el.dataset.id); g.status = 'live'; touch(g); syncOutings(g); closeDialog(); ui.gameTab = 'live'; render(); toast('Editing the game. Tap Finish game to save changes.');
+  },
+  askDeleteGame(el) { ui.confirm = 'del-' + el.dataset.id; viewGame(el.dataset.id); },
+  deleteGame(el) { const g = gameById(el.dataset.id); g.deleted = true; touch(g); syncOutings(g); save(); ui.confirm = null; closeDialog(); render(); toast('Game deleted'); },
+  copyReport() {
+    const mode = ui.repMode || 'weekend', [df, dt] = weekendDefault(), f = ui.repFrom || df, t = ui.repTo || dt;
+    const list = mode === 'season' ? games().filter(g => g.status === 'final').sort((a, b) => a.date.localeCompare(b.date)) : rangeGames(f, t);
+    copyText(reportText(list, mode === 'season' ? 'FCA Season Report' : `FCA Weekend Report · ${fmtDate(f)} – ${fmtDate(t)}`), 'Report');
+  },
+  copyGameReport(el) { const g = gameById(el.dataset.id); copyText(reportText([g], `FCA Game Report · ${fmtDate(g.date)} vs ${g.opp || 'Opponent'}`), 'Game report'); },
   copyLineup() { copyText(lineupText(), 'Lineup'); },
   newDevo() { const d = blankDevo(); state.devos.unshift(d); state.curDevo = d.id; ui.confirm = null; save(); render(); document.getElementById('dv-title')?.focus(); },
   devoSetting(el) { curDevo().setting = el.dataset.v; save(); render(); },
@@ -2741,6 +3146,7 @@ document.addEventListener('input', e => {
     const p = state.roster.find(x => x.id === d.pid); p[d.ro] = el.value; save();
     const cell = document.querySelector(`[data-nm="${p.id}"]`); if (cell) cell.textContent = playerLabel(p);
   }
+  else if (d.lg) { const g = liveGame(); if (g) { g[d.lg] = el.value; touch(g); } }
   else if (d.dv) {
     const v = curDevo(); v[d.dv] = el.value; save();
     const opt = document.querySelector(`#devoSel option[value="${v.id}"]`);
@@ -2755,6 +3161,21 @@ document.addEventListener('change', e => {
   const el = e.target, d = el.dataset;
   if (d.change === 'selPlan') { state.cur = el.value; ui.confirm = null; save(); render(); }
   else if (d.change === 'selDevo') { state.curDevo = el.value; ui.confirm = null; save(); render(); }
+  else if (d.rep) { ui[d.rep === 'from' ? 'repFrom' : 'repTo'] = el.value; render(); }
+  else if (d.gp) {
+    const g = liveGame(), p = g && g.pitchers.find(x => x.id === d.pi); if (!p) return;
+    if (d.gp === 'pid') {
+      if (el.value === '__new') {
+        // Adds the player to the team roster as a pitcher.
+        const name = (prompt('New pitcher’s name') || '').trim();
+        if (!name) { render(); return; }
+        const np = { id: uid(), num: '', name, pos: 'P' }; state.roster.push(np); p.pid = np.id;
+      } else p.pid = el.value;
+    } else if (d.gp === 'pitches') { p.pitches = Math.max(0, parseInt(el.value, 10) || 0); p.last = []; }
+    else if (d.gp === 'strikes') { p.strikes = Math.max(0, parseInt(el.value, 10) || 0); p.last = []; }
+    else if (d.gp === 'ip') { p.outs = outsFromIp(el.value); p.last = []; }
+    touch(g); render();
+  }
   else if (d.workdate) { ui.workDate = el.value || today(); render(); }
   else if (d.workage) { state.workAge = el.value; save(); render(); }
   else if (d.slotpos) { const sl = lineupArr()[+d.slotpos]; if (sl) sl.pos = el.value; save(); render(); }

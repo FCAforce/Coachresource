@@ -6,7 +6,7 @@ A mobile-friendly coaching tool for FCA Sports Idaho Clubs, built from the *FCA 
 
 - **Practice** – the guide's practice templates as a timeline; add drills to blocks; branded PDF with drill sheets
 - **Drills** – searchable drill library with YouTube videos
-- **Game Day** – game plan and pregame routine, lineup builder (saved roster, drag-and-drop batting order, FCA scorecard PDF), pitcher workload tracker, signs, live tracker
+- **Game Day** – live game tracker (score, QAB/AB, freebie war, BASES2, BID's/Blocks/LOB, mental game, each pitcher's pitches/strikes/IP/QINN/LOBO); game, weekend and season reports with charts, copy-as-text and PDF; pitcher workload tracker fed automatically by finished games; game plan, signs, and the lineup builder
 - **Devos** – staff-published devotionals plus a blank devo template
 - **Resources** – philosophy, the Coach's Mandate, team goals, strategy, bunt defense, base running and more
 
