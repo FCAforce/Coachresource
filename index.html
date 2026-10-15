@@ -346,6 +346,9 @@ textarea { resize: vertical; min-height: 80px; }
 .prose ol { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
 
 /* Lineup builder */
+/* Expandable panels lay out as blocks: as grids they grow to the width of any wide table inside. */
+details.panel { display: block; }
+details.panel > * + * { margin-top: 14px; }
 details.panel > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 details.panel > summary::-webkit-details-marker { display: none; }
 details.panel > summary h2::after { content: ' ▾'; font-size: 14px; color: var(--muted); }
@@ -433,6 +436,14 @@ details.panel:not([open]) > summary h2::after { content: ' ▸'; }
 .gr-score .w { color: var(--good); } .gr-score .l { color: var(--bad); }
 @media (max-width: 520px) { .game-row { grid-template-columns: minmax(0, 1fr) auto; } .game-row .gr-date { grid-column: 1 / -1; } .game-row .pill { grid-column: 1 / -1; justify-self: start; } }
 
+.box-paste { border: 1px dashed var(--line); border-radius: var(--radius); padding: 10px 12px; display: block; min-width: 0; }
+.box-paste > * + * { margin-top: 10px; }
+.arm > * { min-width: 0; }
+.box-paste > summary { cursor: pointer; font-weight: 600; }
+.box-paste[open] > summary { color: var(--gold-text); }
+.box-prev tr.skip td { color: var(--muted); }
+.box-prev select { padding: 6px 4px; font-size: 15px; min-width: 150px; }
+
 /* Team */
 .check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
 .check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--gold); flex: none; }
@@ -486,11 +497,11 @@ dialog::backdrop { background: rgba(10,10,10,.55); }
       <div class="mark-sub">FCA Coach Guide</div>
     </div>
     <nav class="tabs" aria-label="Sections">
+      <button class="tab" data-tab="resources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6.5A1.5 1.5 0 014.5 5H9l2 2h8.5A1.5 1.5 0 0121 8.5v10a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 18.5z"/><path d="M8 13h8M8 16.5h5"/></svg>Resources</button>
       <button class="tab" data-tab="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.5h6V4M9 10h6M9 14h6M9 18h3"/></svg>Practice</button>
       <button class="tab" data-tab="drills"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M7 5.5c2 2 2 11 0 13M17 5.5c-2 2-2 11 0 13"/></svg>Drills</button>
       <button class="tab" data-tab="game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 8v9H4v-9z"/><path d="M9 20v-5h6v5"/></svg>Game Day</button>
       <button class="tab" data-tab="devos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 016.5 3H19v15H6.5A1.5 1.5 0 005 19.5z"/><path d="M5 19.5A1.5 1.5 0 006.5 21H19v-3M12 6.5v7M9.5 9h5"/></svg>Devos</button>
-      <button class="tab" data-tab="resources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6.5A1.5 1.5 0 014.5 5H9l2 2h8.5A1.5 1.5 0 0121 8.5v10a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 18.5z"/><path d="M8 13h8M8 16.5h5"/></svg>Resources</button>
     </nav>
   </div>
 </header>
@@ -920,7 +931,7 @@ function save() {
   clearTimeout(save.t);
   save.t = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }, 200);
 }
-const ui = { bunt: 1, tab: 'practice', newOpen: false, confirm: null, q: '', cat: 'All', gameTab: 'live' };
+const ui = { bunt: 1, tab: 'resources', newOpen: false, confirm: null, q: '', cat: 'All', gameTab: 'live' };
 const curPlan = () => state.plans.find(p => p.id === state.cur) || state.plans[0];
 
 /* ========================== helpers ========================== */
@@ -1807,6 +1818,95 @@ function syncOutings(g) {
     .forEach(p => state.outings.push({ id: uid(), pid: p.pid, date: g.date, pitches: p.pitches || 0, outs: p.outs || 0, opp: g.opp, gameId: g.id, updatedAt: Date.now() }));
 }
 
+/* ---------- Paste a GameChanger box score ----------
+   Reads pitching lines from copied box-score text: the pitching table (name, IP, and #P / NP / PC
+   pitch counts when present) and the "Pitches-Strikes: Name 54-35, …" line. Names are matched to the
+   team roster; anything unmatched (usually the other team's pitchers) is skipped unless chosen. */
+const BOX_PITCH_COLS = ['#P', 'NP', 'PC', 'P', 'PITCHES', 'TP'];
+const BOX_STRIKE_COLS = ['S', 'STRIKES', 'ST', 'TS'];
+const BOX_STAT = /^(IP|H|R|ER|BB|SO|K|HR|HBP|BF|BFP|WP|#P|NP|PC|P|PITCHES|TP|S|ST|STRIKES|TS|ERA|BK|PIK|CS|SB|LOB|GB|FB)$/i;
+const boxKey = n => n.toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^a-z0-9# ]/g, ' ').replace(/\s+/g, ' ').trim();
+
+function parseBoxScore(text) {
+  const found = new Map();
+  const get = raw => {
+    const name = raw.replace(/\(.*?\)/g, '').replace(/\s+/g, ' ').trim().replace(/[,:;-]+$/, '').trim();
+    const k = boxKey(name); if (!k) return null;
+    if (!found.has(k)) found.set(k, { name });
+    return found.get(k);
+  };
+  // 1) "Pitches-Strikes: J Smith 54-35, C Brown 22-14" (may wrap onto the next lines)
+  const ps = text.match(/pitches\s*-\s*strikes\s*:?\s*([\s\S]*?)(?:\n\s*\n|\n\s*[A-Za-z][A-Za-z /-]{2,30}:|$)/i);
+  if (ps) for (const m of ps[1].matchAll(/((?:#\d+\s+)?[A-Za-z](?:[A-Za-z .,'-]|#\d+)*?)\s+(\d{1,3})\s*-\s*(\d{1,3})\b/g)) {
+    const r = get(m[1]); if (r) { r.pitches = +m[2]; r.strikes = +m[3]; }
+  }
+  // 2) Pitching table: a header row with IP, then one row per pitcher until a batting header or a blank-ish line.
+  const lines = text.replace(/\r/g, '').split('\n');
+  let cols = null;
+  for (const line of lines) {
+    const t = line.trim().split(/\s+/).filter(Boolean);
+    if (!t.length) { cols = null; continue; }
+    const upper = t.map(x => x.toUpperCase());
+    if (upper.includes('AB') && !upper.includes('IP')) { cols = null; continue; }            // batting table
+    if (upper.includes('IP') && upper.filter(x => BOX_STAT.test(x)).length >= 3) {           // pitching header
+      cols = upper.filter(x => BOX_STAT.test(x)); continue;
+    }
+    if (!cols) continue;
+    const firstNum = t.findIndex(x => /^\d+(\.\d+)?$/.test(x));
+    if (firstNum < 1) continue;
+    const name = t.slice(0, firstNum).join(' ');
+    if (/^(totals?|team)$/i.test(name)) continue;
+    const nums = t.slice(firstNum).filter(x => /^\d+(\.\d+)?$/.test(x));
+    if (nums.length < 2) continue;
+    const r = get(name); if (!r) continue;
+    const at = c => { const i = cols.indexOf(c); return i >= 0 && i < nums.length ? nums[i] : null; };
+    if (at('IP') != null) r.outs = outsFromIp(at('IP'));
+    const pc = BOX_PITCH_COLS.map(at).find(v => v != null); if (pc != null) r.pitches = +pc;
+    const sc = BOX_STRIKE_COLS.map(at).find(v => v != null); if (sc != null) r.strikes = +sc;
+  }
+  return [...found.values()].filter(r => r.pitches != null || r.outs != null);
+}
+
+// Best roster match for a GameChanger name: jersey number, full name, or initial + last name.
+function matchRoster(name) {
+  const R = activeRoster(), k = boxKey(name), words = k.replace(/#\d+/g, ' ').split(' ').filter(Boolean);
+  const num = (k.match(/#(\d+)/) || [])[1];
+  if (num) { const byNum = R.filter(p => String(p.num) === num); if (byNum.length === 1) return byNum[0]; }
+  const exact = R.filter(p => boxKey(p.name) === words.join(' ')); if (exact.length === 1) return exact[0];
+  if (!words.length) return null;
+  // "Smith, J" puts the last name first; otherwise the last word is the last name.
+  const commaFirst = /,/.test(name);
+  const last = commaFirst ? words[0] : words[words.length - 1], first = commaFirst ? words[1] : words.length > 1 ? words[0] : '';
+  let c = R.filter(p => { const w = boxKey(p.name).split(' '); return w[w.length - 1] === last; });
+  if (c.length > 1 && first) c = c.filter(p => boxKey(p.name).startsWith(first[0]));
+  return c.length === 1 ? c[0] : null;
+}
+
+function boxPastePanel(g) {
+  const prev = ui.boxRows;
+  const R = activeRoster();
+  return `<details class="box-paste" ${prev || ui.boxOpen ? 'open' : ''} data-toggle="boxOpen">
+    <summary>Paste box score from GameChanger</summary>
+    <p class="lede" style="font-size:14px">In GameChanger, open the game’s <b>Box Score</b>, select the pitching section (include the “Pitches-Strikes” line if you see it), copy, and paste it here.</p>
+    <label class="sr" for="boxText">GameChanger box score</label>
+    <textarea id="boxText" rows="6" placeholder="PITCHING  IP  H  R  ER  BB  SO&#10;J Smith   3.0 2  1  1   2   4&#10;C Brown   2.0 1  0  0   1   2&#10;&#10;Pitches-Strikes: J Smith 54-35, C Brown 22-14">${esc(ui.boxText || '')}</textarea>
+    <div class="row"><button class="btn" data-act="readBox">Read box score</button>${prev ? '<button class="btn ghost sm" data-act="clearBox">Clear</button>' : ''}</div>
+    ${prev ? (prev.length ? `<div class="table-wrap"><table class="signs rep box-prev">
+      <thead><tr><th>GameChanger</th><th>Our player</th><th>Pitches</th><th>Strikes</th><th>IP</th></tr></thead>
+      <tbody>${prev.map((r, i) => `<tr class="${r.pid ? '' : 'skip'}">
+        <td class="nm">${esc(r.name)}</td>
+        <td><label class="sr" for="bx-${i}">Match for ${esc(r.name)}</label><select id="bx-${i}" data-box="${i}">
+          <option value="">Skip (other team)</option>
+          ${R.map(p => `<option value="${p.id}" ${p.id === r.pid ? 'selected' : ''}>${esc(playerLabel(p))}</option>`).join('')}
+          <option value="__new">+ Add “${esc(r.name)}” to roster</option></select></td>
+        <td>${r.pitches ?? '—'}</td><td>${r.strikes ?? '—'}</td><td>${r.outs != null ? ipFromOuts(r.outs) : '—'}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <div class="row"><button class="btn primary" data-act="applyBox">Add ${prev.filter(r => r.pid).length} pitcher${prev.filter(r => r.pid).length === 1 ? '' : 's'} to this game</button>
+      <span class="lede" style="font-size:13px">Replaces those pitchers’ lines in this game. Unmatched names are skipped.</span></div>`
+    : `<p class="callout">Couldn’t find any pitching lines. Make sure the copy includes the pitching table (with IP) or the “Pitches-Strikes” line.</p>`) : ''}
+  </details>`;
+}
+
 /* ---------- Live game ---------- */
 function gameLive() {
   const g = liveGame();
@@ -1911,6 +2011,7 @@ function gameLive() {
     <h2 class="sec">Pitching</h2>
     ${pRows || '<p class="lede" style="font-size:14px">Add each pitcher who throws. Tap + Ball / + Strike every pitch, and + Out for each out, or type the totals from GameChanger.</p>'}
     <div><button class="btn" data-act="addGP">+ Add pitcher</button></div>
+    ${boxPastePanel(g)}
   </section>
 
   <section class="panel">
@@ -2964,7 +3065,7 @@ function render() {
 }
 function go(tab) {
   if (tab === 'team') tab = 'resources';
-  if (!['practice', 'drills', 'game', 'devos', 'resources'].includes(tab)) tab = 'practice';
+  if (!['practice', 'drills', 'game', 'devos', 'resources'].includes(tab)) tab = 'resources';
   ui.tab = tab; ui.confirm = null; render();
   if (location.hash.slice(1) !== tab) history.replaceState(null, '', '#' + tab);
   window.scrollTo(0, 0);
@@ -3068,6 +3169,26 @@ const ACTIONS = {
   rmOuting(el) { Workload.remove(el.dataset.id); render(); toast('Outing deleted'); },
   copyAvail() { copyText(availabilityText(), 'Pitcher availability'); },
   pdf(el) { makePdf(el.dataset.kind, el.dataset.mode, el.dataset.id); },
+  readBox() {
+    ui.boxText = document.getElementById('boxText').value;
+    ui.boxRows = parseBoxScore(ui.boxText).map(r => ({ ...r, pid: matchRoster(r.name)?.id || '' }));
+    ui.boxOpen = true; render();
+  },
+  clearBox() { ui.boxRows = null; ui.boxText = ''; render(); },
+  applyBox() {
+    const g = liveGame(), rows = (ui.boxRows || []).filter(r => r.pid);
+    if (!rows.length) { toast('Match at least one pitcher to your roster'); return; }
+    for (const r of rows) {
+      let p = g.pitchers.find(x => x.pid === r.pid);
+      if (!p) { p = { id: uid(), pid: r.pid, pitches: 0, strikes: 0, outs: 0, qinn: 0, lobo: 0, last: [] }; g.pitchers.push(p); }
+      if (r.pitches != null) p.pitches = r.pitches;
+      if (r.strikes != null) p.strikes = r.strikes;
+      if (r.outs != null) p.outs = r.outs;
+      p.last = [];
+    }
+    touch(g); ui.boxRows = null; ui.boxText = ''; ui.boxOpen = false; render();
+    toast(`Added ${rows.length} pitching line${rows.length > 1 ? 's' : ''} from GameChanger`);
+  },
   startGame() {
     const g = blankLiveGame({ opp: document.getElementById('ngOpp').value.trim(), date: document.getElementById('ngDate').value || today(), event: document.getElementById('ngEvent').value.trim() });
     state.games.push(g); save(); render(); toast('Game started. Good luck!');
@@ -3161,6 +3282,14 @@ document.addEventListener('change', e => {
   const el = e.target, d = el.dataset;
   if (d.change === 'selPlan') { state.cur = el.value; ui.confirm = null; save(); render(); }
   else if (d.change === 'selDevo') { state.curDevo = el.value; ui.confirm = null; save(); render(); }
+  else if (d.box) {
+    const r = ui.boxRows[+d.box];
+    if (el.value === '__new') {
+      const np = { id: uid(), num: (r.name.match(/#(\d+)/) || [])[1] || '', name: r.name.replace(/#\d+/g, '').replace(/\s+/g, ' ').trim(), pos: 'P' };
+      state.roster.push(np); save(); r.pid = np.id;
+    } else r.pid = el.value;
+    render();
+  }
   else if (d.rep) { ui[d.rep === 'from' ? 'repFrom' : 'repTo'] = el.value; render(); }
   else if (d.gp) {
     const g = liveGame(), p = g && g.pitchers.find(x => x.id === d.pi); if (!p) return;
@@ -3189,7 +3318,7 @@ document.addEventListener('change', e => {
 });
 
 document.addEventListener('toggle', e => { const k = e.target.dataset?.toggle; if (k) ui[k] = e.target.open; }, true);
-go(location.hash.slice(1) || 'practice');
+go(location.hash.slice(1) || 'resources');
 loadContent();
 try { if (sessionStorage.getItem('fcaImported')) { sessionStorage.removeItem('fcaImported'); setTimeout(() => toast('Welcome to the new address. Your saved plans, roster and devos came with you.'), 600); } } catch (e) {}
 </script>
