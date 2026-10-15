@@ -2,7 +2,7 @@
   "name": "FCA Sports Way Coach Guide",
   "short_name": "FCA Coach",
   "description": "Practice planner, drill library, lineup cards, devos and resources for FCA Sports Idaho Clubs coaches.",
-  "start_url": "./#practice",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F4F4F1",
