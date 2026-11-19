@@ -16,7 +16,7 @@
 <meta name="theme-color" content="#242422" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Graduate&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Saira+Condensed:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Saira+Condensed:wght@600;700&display=swap">
 <style>
 /* Layout: one column "clipboard" under a black scoreboard header with a gold stripe; section tabs
    become a black bottom bar on phones. Look: varsity night game: concrete gray ground, crisp
@@ -38,8 +38,6 @@
   --band-muted: #9CA3AF;
   --press-bg: #0E0F12;
   --press-fg: #FFC20E;
-  --font-varsity: "Graduate", Georgia, serif;
-  --outline: #0E0F12;
   --shadow: 0 1px 2px rgba(14, 15, 18, .06), 0 10px 24px -18px rgba(14, 15, 18, .35);
   --field: #DDE8D6;
   --dirt: #EBDDC9;
@@ -54,13 +52,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0A0B0D; --surface: #15171B; --ink: #F2F3F5; --muted: #9AA1AD; --line: #262A31;
-    --gold-soft: #3A3011; --gold-text: #FFC20E; --good: #61C58F; --bad: #F2877E; --band: #000000; --shadow: none; --press-bg: #FFC20E; --press-fg: #0E0F12; --outline: #3A3F48; --field: #26301F; --dirt: #3A3127; --dirt-dark: #4A3E30;
+    --gold-soft: #3A3011; --gold-text: #FFC20E; --good: #61C58F; --bad: #F2877E; --band: #000000; --shadow: none; --press-bg: #FFC20E; --press-fg: #0E0F12; --field: #26301F; --dirt: #3A3127; --dirt-dark: #4A3E30;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0A0B0D; --surface: #15171B; --ink: #F2F3F5; --muted: #9AA1AD; --line: #262A31;
-  --gold-soft: #3A3011; --gold-text: #FFC20E; --good: #61C58F; --bad: #F2877E; --band: #000000; --shadow: none; --press-bg: #FFC20E; --press-fg: #0E0F12; --outline: #3A3F48; --field: #26301F; --dirt: #3A3127; --dirt-dark: #4A3E30;
+  --gold-soft: #3A3011; --gold-text: #FFC20E; --good: #61C58F; --bad: #F2877E; --band: #000000; --shadow: none; --press-bg: #FFC20E; --press-fg: #0E0F12; --field: #26301F; --dirt: #3A3127; --dirt-dark: #4A3E30;
   color-scheme: dark;
 }
 
@@ -588,37 +586,6 @@ input:focus, select:focus, textarea:focus { border-color: var(--ink); outline: n
 
 .sync { display: block; }
 .sync .dot { display: inline-block; vertical-align: middle; margin-right: 8px; }
-/* ---------- Varsity layer (A × E hybrid) ----------
-   Letterman details on the night-game base: collegiate lettering for the wordmark and the big
-   statements, stitched patch tags, a double stripe under the header, outlined cards with an
-   offset gold shadow, and a stitched border on the philosophy banner. */
-.top { box-shadow: 0 3px 0 var(--gold), 0 6px 0 var(--band), 0 8px 0 var(--gold); }
-.mark { font-family: var(--font-varsity); font-size: 21px; letter-spacing: .02em; }
-.mark b, .mark span { font-weight: 400; }
-.mark-sub { letter-spacing: .2em; }
-@media (max-width: 720px) { .tabs { box-shadow: 0 -3px 0 var(--gold), 0 -6px 0 var(--band), 0 -8px 0 var(--gold); } }
-
-/* Stitched patch tags */
-.eyebrow { font-family: var(--font-varsity); font-weight: 400; letter-spacing: .08em; font-size: 12px; padding: 5px 14px 4px; }
-.eyebrow::before { transform: none; border-radius: 7px; outline: 1.5px dashed var(--on-gold); outline-offset: -5px; }
-
-/* Big statements in varsity lettering */
-.philo-title, .mandate-title { font-family: var(--font-varsity); font-weight: 400; letter-spacing: 0; line-height: 1; }
-.philo-title { font-size: clamp(38px, 10vw, 70px); }
-.mandate-title { font-size: clamp(28px, 6.4vw, 42px); }
-.philo-faith b { font-family: var(--font-varsity); font-weight: 400; font-size: clamp(34px, 8vw, 50px); }
-.philo { border: 3px solid var(--gold); outline: 2px dashed rgba(255, 194, 14, .55); outline-offset: -11px; border-radius: 14px; }
-
-/* Outlined cards with an offset gold shadow on the things you tap */
-.card, .topic, .game-row { border: 2px solid var(--outline); box-shadow: 4px 4px 0 var(--gold); }
-.card:hover, .topic:hover, .game-row:hover { border-color: var(--outline); transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--gold); }
-.topic { border-left-width: 2px; }
-.tile { border: 2px solid var(--outline); border-top-width: 5px; border-top-color: var(--gold); box-shadow: 3px 3px 0 var(--gold); }
-.mandate-block { border: 2px solid var(--outline); border-top: 6px solid var(--gold); box-shadow: 5px 5px 0 var(--gold); }
-.btn.primary { border-color: var(--outline); box-shadow: 2px 2px 0 var(--outline); }
-.btn.primary:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--outline); }
-.score > div { border: 2px solid var(--gold); }
-
 /* Bottom page padding clears the dark bottom bar */
 .foot { padding-bottom: 8px; }
 </style>
